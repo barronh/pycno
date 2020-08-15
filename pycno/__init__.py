@@ -83,18 +83,21 @@ class cno:
 
         Returns
         -------
-        None
-            lines are added to ax or plt.gca()
+        lines : list
+            lines that were added to ax or plt.gca().
         """
         if ax is None:
             import matplotlib.pyplot as plt
             ax = plt.gca()
         features = self.getfeatures(cnopath)
+        lines = []
         for flon, flat in features:
-            ax.plot(flon, flat, color='k', linewidth=0.75, alpha=0.7)
+            l, = ax.plot(flon, flat, color='k', linewidth=0.75, alpha=0.7)
+            lines.append(l)
         if self._clipax:
             ax.set_xlim(*self._xlim)
             ax.set_ylim(*self._ylim)
+        return lines
 
     def _parseoverlay(self, cnopath):
         """
