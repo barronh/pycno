@@ -38,7 +38,6 @@ class cno:
         self._cachedfeatures = {}
         if data is None:
             data = os.environ.get('PYCNO_DATA', None)
-            print(data)
 
         if data is None:
             data = Path.home() / '.pycno'
@@ -98,7 +97,7 @@ class cno:
         buff = np.frombuffer(f.read(), '>i')
         check = buff[:2].view('S8')[0] == b'GISSCNOB'
         if not check:
-            print('Is CNOB file good?')
+            warnings.warn('Is CNOB file good?')
         nines, = np.where(buff == 999999)
         starts = nines[:-1]
         ends = nines[1:]
