@@ -71,6 +71,21 @@ class cno:
         return self._cachedfeatures[cnopath]
 
     def draw(self, cnopath='MWDB_Coasts_Countries_3.cnob', ax=None):
+        """
+        Add overlay to axes from cno file.
+
+        Arguments
+        ---------
+        cnopath : str
+            path to file to plot
+        ax : matplotlib.axes.Axes
+            Optional, specify axes for overlay.
+
+        Returns
+        -------
+        None
+            lines are added to ax or plt.gca()
+        """
         if ax is None:
             import matplotlib.pyplot as plt
             ax = plt.gca()
@@ -83,6 +98,8 @@ class cno:
 
     def _parseoverlay(self, cnopath):
         """
+        Parse a cno file
+
         Arguments
         ---------
         cnopath : str
@@ -130,6 +147,20 @@ class cno:
         return features
 
     def _getoverlay(self, cnopath):
+        """
+        Find or download overlay representing cnopath
+
+        Arguments
+        ---------
+        cnopath : str
+          path to CNOB path, relative to self._data or absolute
+        
+        Returns
+        -------
+        realpath : pathlib.Path
+          realpath to cno file
+        """
+
         from urllib.request import urlretrieve
         cnopatho = Path(cnopath)
         if cnopatho.exists():
