@@ -46,7 +46,7 @@ class cno:
         """
         if cnobpath not in self._cachedfeatures:
             if not os.path.exists(cnobpath):
-                panoplyoverlay._getoverlay(cnobpath)
+                cno._getoverlay(cnobpath)
             self._cachedfeatures[cnobpath] = self._parseoverlay(cnobpath)
         return self._cachedfeatures[cnobpath]
 
