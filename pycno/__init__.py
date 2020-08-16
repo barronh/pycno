@@ -16,7 +16,8 @@ class cno:
         Arguments
         ---------
         proj : pyproj.Proj
-            or any function that accepts lon, lat, and inverse=True
+            or any function that accepts lon, lat and returns x, y in axes
+            data coordinates
         xlim : tuple
             length 2 tuple where values must be accepted by set_xlim
         ylim : tuple
@@ -131,7 +132,7 @@ class cno:
                 x = lon
                 y = lat
             else:
-                x, y = self._proj(lon, lat, inverse)
+                x, y = self._proj(lon, lat)
 
             if xlim[0] is not None:
                 x = np.ma.masked_less(x, xlim[0])
