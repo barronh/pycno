@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pycno",
-    version="0.0.1",
+    version="0.0.2",
     author="Barron H. Henderson",
     author_email="barronh@gmail.com",
     description="Python map overlay software to read CNO and CNOB files.",
