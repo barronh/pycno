@@ -1,5 +1,6 @@
 # pycno
-Python map overlay software to read CNO and CNOB files.
+
+Python map overlay software to read CNO and CNOB files. This provides a light-weight interface to add overlays to `matplotlib` plots. For longitude/latitude plots, no additional prerequisites are required. For projections, see "projection support." This allows for pure python installation with supplemental support if desired.
 
 # status
 
@@ -9,14 +10,24 @@ Very early development. Useful light weight mapping library, but interface likel
 
 `pip install https://github.com/barronh/pycno/archive/main.zip`
 
+to-do: add to pypi.
+
 # example usage
 
-By default, this adds coasts and countries to the current axes.
+By default, this adds coasts and countries to the current axes. If the current axes has no other data on it, provide the xlim/ylim keywords to define the extents.
 
 ```
 import pycno
 import matplotlib.pyplot as plt
-cno = pycno.cno()
+
+
+cno = pycno.cno(xlim=(-180, 180), ylim=(-90, 90))
 cno.draw()
 plt.savefig('coasts_countries.png')
 ```
+
+Use the cnopath keyword to specify another overlay. If you specify a cnopath you don't have, it will automatically be downloaded from the [Panoply Overlay website](https://www.giss.nasa.gov/tools/panoply/overlays/). For example, `cno.draw('MWDB_Coasts_NA_1.cnob')` will download a high-resolution version of North American coasts, continents, and states.
+
+# projection support
+
+`pycno.cno` supports the pyproj projections. If you provide proj, then overlays will be converted to the projection space and xlim/ylim will need to be provided in projection space. This should work for most projections, but has only been tested with  Lambert Conformal Conic and Polar Stereographic. If you test it with another projection, please post a comment under issues and let us know.
