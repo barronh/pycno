@@ -4,13 +4,15 @@ Python map overlay software to read CNO and CNOB files. This provides a light-we
 
 # status
 
+[![Build Status](https://travis-ci.org/barronh/pycno.svg?branch=main)](https://travis-ci.org/barronh/pycno)
+
 Very early development. Useful light weight mapping library, but interface likely to change until stable.
 
 # install 
 
-`pip install https://github.com/barronh/pycno/archive/main.zip`
+* Latest release: `pip install pycno`
+* Lastes development: `pip install https://github.com/barronh/pycno/archive/main.zip`
 
-to-do: add to pypi.
 
 # example usage
 
