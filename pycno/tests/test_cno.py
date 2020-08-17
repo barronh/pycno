@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import warnings
 
+
 def test_cno_default():
     plt.close()
     warnings.simplefilter('ignore')
