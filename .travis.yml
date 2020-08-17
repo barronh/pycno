@@ -2,7 +2,7 @@ language: python
 python:
   - "3.6"
 install:
-  - pip install --user -r dev-requirements.txt
+  - pip install -r dev-requirements.txt
 script:
   - flake8 pycno
   - python -OO -c "import pycno";
