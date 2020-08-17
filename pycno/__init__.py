@@ -196,8 +196,13 @@ class cno:
         cnopatho = Path(cnopath)
         if cnopatho.exists():
             return cnopatho
+
         cnopatho = self._data / cnopatho
         if not cnopatho.exists():
+            distpatho = Path(__path__[0]) / Path('data') / cnopatho
+            if distpatho.exists():
+                return distpatho
+
             panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
             url = panoplyurl + cnopath
             warnings.warn('Downloading: ' + url + ' to ' + str(cnopatho))
