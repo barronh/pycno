@@ -3,9 +3,17 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open("pycno/__init__.py", "r") as fh:
+    for l in fh:
+        if l.startswith('__version__'):
+            exec(l)
+            break
+    else:
+        __version__ = 'x.y.z'
+
 setuptools.setup(
     name="pycno",
-    version="0.0.2",
+    version=__version__,
     author="Barron H. Henderson",
     author_email="barronh@gmail.com",
     description="Python map overlay software to read CNO and CNOB files.",

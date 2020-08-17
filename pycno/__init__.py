@@ -1,9 +1,13 @@
-__all__ = ['cno']
+__all__ = ['cno', 'version']
 
 import os
 from pathlib import Path
 import warnings
 import numpy as np
+
+
+__version__ = "0.0.2"
+
 
 class cno:
     def __init__(
@@ -23,13 +27,13 @@ class cno:
         ylim : tuple
             length 2 tuple where values must be accepted by set_ylim
         clipax : bool
-            If True, use ax.set_xlim and ax.set_ylim with xlim and ylim 
+            If True, use ax.set_xlim and ax.set_ylim with xlim and ylim
             parameters
         data : str
             Optional, path to downloaded cno files. Defaults to environmental
             variable PYCNO_DATA, if not defined, defaults to .
         line_kwds : keywords
-            passed to drawing of lines. linewidth defaults to 0.5, and 
+            passed to drawing of lines. linewidth defaults to 0.5, and
             linecolor defaults to black. All other properties defautl to
             rcParams
         """
@@ -62,12 +66,12 @@ class cno:
     def getfeatures(self, cnopath):
         """
         Get coordinates for each feature.
-        
+
         Arguments
         ---------
         cnopath : str
           path to cnob file
-        
+
         Returns
         -------
         features : list
@@ -102,7 +106,7 @@ class cno:
         for k, v in self._linedefaults.items():
             if k not in line_kwds:
                 line_kwds[k] = v
-        
+
         if ax is None:
             import matplotlib.pyplot as plt
             ax = plt.gca()
@@ -131,7 +135,7 @@ class cno:
         ---------
         cnopath : str
           path to CNOB path
-        
+
         Returns
         -------
         features : list
@@ -181,7 +185,7 @@ class cno:
         ---------
         cnopath : str
           path to CNOB path, relative to self._data or absolute
-        
+
         Returns
         -------
         realpath : pathlib.Path
