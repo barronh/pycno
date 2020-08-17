@@ -8,7 +8,7 @@ import numpy as np
 class cno:
     def __init__(
         self, proj=None, xlim=(None, None), ylim=(None, None), clipax=True,
-        data=None
+        data=None, **line_kwds
     ):
         """
         CNO and CNOB overlay reader and plotter.
@@ -28,6 +28,10 @@ class cno:
         data : str
             Optional, path to downloaded cno files. Defaults to environmental
             variable PYCNO_DATA, if not defined, defaults to .
+        line_kwds : keywords
+            passed to drawing of lines. linewidth defaults to 0.5, and 
+            linecolor defaults to black. All other properties defautl to
+            rcParams
         """
         if isinstance(proj, str):
             import pyproj
@@ -37,6 +41,9 @@ class cno:
         self._proj = proj
         self._clipax = clipax
         self._cachedfeatures = {}
+        self._linedefaults = line_kwds.copy()
+        self._linedefaults.setdefault('color', 'k')
+        self._linedefaults.setdefault('linewidth', 0.5)
         if data is None:
             data = os.environ.get('PYCNO_DATA', None)
 
@@ -71,7 +78,9 @@ class cno:
             self._cachedfeatures[cnopath] = self._parseoverlay(cnorealpath)
         return self._cachedfeatures[cnopath]
 
-    def draw(self, cnopath='MWDB_Coasts_Countries_3.cnob', ax=None):
+    def draw(
+        self, cnopath='MWDB_Coasts_Countries_3.cnob', ax=None, **line_kwds
+    ):
         """
         Add overlay to axes from cno file.
 
@@ -81,20 +90,34 @@ class cno:
             path to file to plot
         ax : matplotlib.axes.Axes
             Optional, specify axes for overlay.
-
+        line_kwds : mappable
+            keywords for drawing lines.
         Returns
         -------
         lines : list
             lines that were added to ax or plt.gca().
         """
+        from matplotlib.collections import LineCollection
+        line_kwds = line_kwds.copy()
+        for k, v in self._linedefaults.items():
+            if k not in line_kwds:
+                line_kwds[k] = v
+        
         if ax is None:
             import matplotlib.pyplot as plt
             ax = plt.gca()
         features = self.getfeatures(cnopath)
-        lines = []
-        for flon, flat in features:
-            l, = ax.plot(flon, flat, color='k', linewidth=0.75, alpha=0.7)
-            lines.append(l)
+        # Switching from lines to LineCollection
+        # for efficiency
+        # lines = []
+        # for flon, flat in features:
+        #     l, = ax.plot(flon, flat, **line_kwds)
+        #     lines.append(l)
+        segs = [np.ma.array(lonlat).T for lonlat in features]
+        lines = LineCollection(
+          segs, **line_kwds
+        )
+        ax.add_collection(lines)
         if self._clipax:
             ax.set_xlim(*self._xlim)
             ax.set_ylim(*self._ylim)
