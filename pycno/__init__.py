@@ -175,6 +175,7 @@ class cno:
                 continue
             features.append((x, y))
 
+        f.close()
         return features
 
     def _getoverlay(self, cnopath):
