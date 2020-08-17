@@ -34,6 +34,36 @@ Use the cnopath keyword to specify another overlay. If you specify a cnopath you
 
 `pycno.cno` supports the pyproj projections. If you provide proj, then overlays will be converted to the projection space and xlim/ylim will need to be provided in projection space. This should work for most projections, but has only been tested with  Lambert Conformal Conic and Polar Stereographic. If you test it with another projection, please post a comment under issues and let us know.
 
+
+## lambert conic conformal
+
+Example uses LCC domain used by EPA and called 12US2
+
+```
+import pycno
+import pyproj
+import matplotlib.pyplot as plt
+
+
+proj = pyproj.Proj(
+  (
+    '+proj=lcc +lat_0=40 +lon_0=-97 +lat_1=33 +lat_2=45 ' +
+    '+x_0=2412000 +y_0=1620000 +R=6370000 +to_meter=12000 ' +
+    '+no_defs'
+  ),
+  preserve_units=True
+)
+plt.axis('image')
+cno = pycno.cno(proj=proj, xlim=(0, 396), ylim=(0, 246))
+cno.draw()
+plt.savefig('coasts_countries_lcc.png')
+```
+
+## polar stereographic
+
+Example uses Polar Stereographic domain used by EPA and called 108NHEMI2
+
+
 ```
 import pycno
 import pyproj
