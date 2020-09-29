@@ -6,12 +6,12 @@ Python map overlay software to read CNO and CNOB files. This provides a light-we
 
 [![Build Status](https://travis-ci.org/barronh/pycno.svg?branch=main)](https://travis-ci.org/barronh/pycno)
 
-Very early development. Useful light weight mapping library, but interface likely to change until stable.
+Early development. Useful light weight mapping library. Interface may change.
 
 # install 
 
 * Latest release: `pip install pycno`
-* Lastes development: `pip install https://github.com/barronh/pycno/archive/main.zip`
+* Lastest development: `pip install https://github.com/barronh/pycno/archive/main.zip`
 
 
 # example usage
@@ -28,7 +28,7 @@ cno.draw()
 plt.savefig('coasts_countries.png')
 ```
 
-Use the cnopath keyword to specify another overlay. If you specify a cnopath you don't have, it will automatically be downloaded from the [Panoply Overlay website](https://www.giss.nasa.gov/tools/panoply/overlays/). For example, `cno.draw('MWDB_Coasts_NA_1.cnob')` will download a high-resolution version of North American coasts, continents, and states.
+Use the cnopath keyword to specify another overlay. If you specify a downloadable cnopath you don't have, it will automatically be downloaded. For a list of downloadable cnob, see pycno.downloadable. Currently, this includes the [Panoply Overlay cnobs](https://www.giss.nasa.gov/tools/panoply/overlays/). For example, `cno.draw('MWDB_Coasts_NA_1.cnob')` will download a high-resolution version of North American coasts, continents, and states.
 
 # projection support
 

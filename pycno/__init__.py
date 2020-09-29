@@ -1,4 +1,4 @@
-__all__ = ['cno', 'version']
+__all__ = ['cno', 'downloadable', 'version']
 
 import os
 from pathlib import Path
@@ -6,7 +6,31 @@ import warnings
 import numpy as np
 
 
-__version__ = "0.0.2"
+__version__ = "0.1.0"
+
+_panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
+_panoplycnobs = [
+    'MWDB_Coasts_1.cnob',
+    'MWDB_Coasts_3.cnob',
+    'MWDB_Coasts_Countries_1.cnob',
+    'MWDB_Coasts_Countries_3.cnob',
+    'MWDB_Coasts_Lakes_1.cnob',
+    'MWDB_Coasts_Lakes_3.cnob',
+    'MWDB_Coasts_NA_1.cnob',
+    'MWDB_Coasts_NA_3.cnob',
+    'MWDB_Coasts_USA_1.cnob',
+    'MWDB_Coasts_USA_3.cnob',
+    'MWDB_Lakes_Rivers_1.cnob',
+    'MWDB_Lakes_Rivers_3.cnob',
+    'Earth_5x4.cnob',
+    'Earth_10x8.cnob',
+    'Paleo_Cretaceous_100Ma.cnob',
+    'Paleo_Paleocene_56Ma.cnob',
+    'Paleo_Sturtian_750Ma.cnob',
+    'Venus_MR_6052km.cnob'
+]
+
+downloadable = {k: _panoplyurl + k for k in _panoplycnobs}
 
 
 class cno:
@@ -31,7 +55,8 @@ class cno:
             parameters
         data : str
             Optional, path to downloaded cno files. Defaults to environmental
-            variable PYCNO_DATA, if not defined, defaults to .
+            variable PYCNO_DATA, if not defined, defaults to ${HOME}/.pycno.
+            If neither path exists, defaults to .
         line_kwds : keywords
             passed to drawing of lines. linewidth defaults to 0.5, and
             linecolor defaults to black. All other properties defautl to
@@ -40,6 +65,7 @@ class cno:
         if isinstance(proj, str):
             import pyproj
             proj = pyproj.Proj(proj)
+
         self._xlim = xlim
         self._ylim = ylim
         self._proj = proj
@@ -63,24 +89,42 @@ class cno:
 
         self._data = Path(data)
 
-    def getfeatures(self, cnopath):
+    @property
+    def data(self):
+        return self._data
+
+    def getfeatures(self, cnopath, cache=True, key=None):
         """
         Get coordinates for each feature.
 
         Arguments
         ---------
         cnopath : str
-          path to cnob file
+            path to file to plot. Will be evaluated as an absolute or relative
+            path. Relative paths will be evaluated in the context of the
+            working directory (`.`), the `data` path or `${HOME}/.pycno`.
+            For a list of downloadable cnob, look at `pycno.downloadable`
+        cache : bool
+            store a cache for later reference
+        key : str or None
+            short name (default cnopath) for later reference
 
         Returns
         -------
         features : list
-          list of features where each feature is (x, y)
+            list of features where each feature is (x, y)
         """
+        if key is None:
+            key = cnopath
+
         if cnopath not in self._cachedfeatures:
             cnorealpath = self._getoverlay(cnopath)
-            self._cachedfeatures[cnopath] = self._parseoverlay(cnorealpath)
-        return self._cachedfeatures[cnopath]
+            out = self._parseoverlay(cnorealpath)
+
+        if cache:
+            self._cachedfeatures[key] = out
+
+        return out
 
     def draw(
         self, cnopath='MWDB_Coasts_Countries_3.cnob', ax=None, **line_kwds
@@ -91,11 +135,15 @@ class cno:
         Arguments
         ---------
         cnopath : str
-            path to file to plot
+            path to file to plot. Will be evaluated as an absolute or relative
+            path. Relative paths will be evaluated in the context of the
+            working directory (`.`), the `data` path or `${HOME}/.pycno`.
+            For a list of downloadable cnob, look at `pycno.downloadable`
         ax : matplotlib.axes.Axes
             Optional, specify axes for overlay.
         line_kwds : mappable
             keywords for drawing lines.
+
         Returns
         -------
         lines : list
@@ -185,7 +233,7 @@ class cno:
         Arguments
         ---------
         cnopath : str
-          path to CNOB path, relative to self._data or absolute
+          path to CNOB path, relative to self.data or absolute
 
         Returns
         -------
@@ -194,18 +242,24 @@ class cno:
         """
 
         from urllib.request import urlretrieve
+
         cnopatho = Path(cnopath)
-        if cnopatho.exists():
-            return cnopatho
+        datapatho = self._data / cnopatho
+        distpatho = Path(__path__[0]) / Path('data') / cnopatho
+        testedpaths = [cnopatho, datapatho, distpatho]
 
-        cnopatho = self._data / cnopatho
-        if not cnopatho.exists():
-            distpatho = Path(__path__[0]) / Path('data') / cnopatho
-            if distpatho.exists():
-                return distpatho
-
-            panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
-            url = panoplyurl + cnopath
-            warnings.warn('Downloading: ' + url + ' to ' + str(cnopatho))
-            urlretrieve(url, cnopatho)
-        return cnopatho
+        for path in testedpaths:
+            if path.exists():
+                return path
+        else:
+            if cnopath in downloadable:
+                url = downloadable[cnopath]
+                warnings.warn('Downloading: ' + url + ' to ' + str(datapatho))
+                urlretrieve(url, datapatho)
+                return datapatho
+            else:
+                raise OSError(
+                    "Path not found\n - " + '\n - '.join(
+                        [str(p) for p in testedpaths]
+                    )
+                )
