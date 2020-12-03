@@ -117,12 +117,13 @@ class cno:
         if key is None:
             key = cnopath
 
-        if cnopath not in self._cachedfeatures:
+        if cnopath in self._cachedfeatures:
+            out = self._cachedfeatures[cnopath]
+        else:
             cnorealpath = self._getoverlay(cnopath)
             out = self._parseoverlay(cnorealpath)
-
-        if cache:
-            self._cachedfeatures[key] = out
+            if cache:
+                self._cachedfeatures[key] = out
 
         return out
 
