@@ -41,3 +41,8 @@ Initial version for use by the public. Includes support for:
 -----
 
 Initial code. Reads CNOB and draws on axes.
+
+to-do
+=====
+
+Priority items will be added here.
