@@ -317,13 +317,74 @@ class cno:
         Arguments
         ---------
         cnopath : str
-          path to CNOB path
+          path to CNO or CNOB path
 
         Returns
         -------
         features : list
           list of (lons, lats) tuples
         """
+        suffix = cnopath.suffix
+        if suffix == '.cno':
+            freader = self._parsecno
+        else:
+            freader = self._parsecnob
+
+        features = freader(cnopath)
+        return features
+
+    def _parsecno(self, cnopath):
+        # The definition of these file format is understood by reading the
+        # files, so it is an operational definition.
+        #
+        # A CNO is a text file, where the data is stored as common deliminted
+        # longitude,latitude pairs on each line. Polygons are separated by
+        # lines with a single 9999 betweenA
+        # e.g., the lines below could be a stand-alone cno file.
+        #
+        # -15.80,28.00
+        # -15.67,27.75
+        # -15.33,27.83
+        # -15.37,28.08
+        # -15.67,28.17
+        # -15.80,28.00
+        # 9999
+        # -14.25,28.08
+        # -13.83,28.25
+        # -13.83,28.83
+        # -14.25,28.33
+        # -14.25,28.08
+        import re
+        import io
+        import numpy as np
+
+        cnodata = open(cnopath).read()
+        cnochunks = re.compile('^9999$', re.M).split(cnodata)
+        features = []
+        for cnochunk in cnochunks:
+            if cnochunk == '':
+                continue
+            iochunk = io.StringIO(cnochunk)
+            lon, lat = np.loadtxt(iochunk, delimiter=',').reshape(-1, 2).T
+            x, y = self._lonlat2xy(lon, lat)
+            if x is None or y is None:
+                continue
+            else:
+                features.append((x, y))
+
+        return features
+
+    def _parsecnob(self, cnopath):
+        # The definition of these file format is understood by reading the
+        # files, so it is an operational definition.
+        #
+        # A CNOB is a binary file starts with a text header with 8 characters
+        # GISSCNOB followed by a block of binary data. The binary data is
+        # stored as big-endian integers where the value has been multiplied by
+        # 1000 with longitude followed by latitude. For CNOB, each polygon is
+        # bounded by 999999 (start and end).
+        #
+
         f = open(cnopath, 'rb')
         buff = np.frombuffer(f.read(), '>i')
         check = buff[:2].view('S8')[0] == b'GISSCNOB'
@@ -333,33 +394,40 @@ class cno:
         starts = nines[:-1]
         ends = nines[1:]
         features = []
-        xlim = self._xlim
-        ylim = self._ylim
         for s, e in zip(starts, ends):
             mybuff = buff[s + 1:e]
             lon, lat = mybuff.reshape(-1, 2).T / 1000
-            if self._proj is None:
-                x = lon
-                y = lat
+            x, y = self._lonlat2xy(lon, lat)
+            if x is None or y is None:
+                continue
             else:
-                x, y = self._proj(lon, lat)
-
-            if xlim[0] is not None:
-                x = np.ma.masked_less(x, xlim[0])
-            if xlim[1] is not None:
-                x = np.ma.masked_greater(x, xlim[1])
-            if ylim[0] is not None:
-                y = np.ma.masked_less(y, ylim[0])
-            if ylim[1] is not None:
-                y = np.ma.masked_greater(y, ylim[1])
-            if np.ma.getmaskarray(x).all():
-                continue
-            if np.ma.getmaskarray(y).all():
-                continue
-            features.append((x, y))
+                features.append((x, y))
 
         f.close()
         return features
+
+    def _lonlat2xy(self, lon, lat):
+        xlim = self._xlim
+        ylim = self._ylim
+        if self._proj is None:
+            x = lon
+            y = lat
+        else:
+            x, y = self._proj(lon, lat)
+
+        if xlim[0] is not None:
+            x = np.ma.masked_less(x, xlim[0])
+        if xlim[1] is not None:
+            x = np.ma.masked_greater(x, xlim[1])
+        if ylim[0] is not None:
+            y = np.ma.masked_less(y, ylim[0])
+        if ylim[1] is not None:
+            y = np.ma.masked_greater(y, ylim[1])
+        if np.ma.getmaskarray(x).all():
+            x, y = None, None
+        if np.ma.getmaskarray(y).all():
+            x, y = None, None
+        return x, y
 
     def _getoverlay(self, cnopath):
         """
