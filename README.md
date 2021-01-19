@@ -1,20 +1,24 @@
-# pycno
+pycno
+=====
 
-Python map overlay software to read CNO and CNOB files. This provides a light-weight interface to add overlays to `matplotlib` plots. For longitude/latitude plots, no additional prerequisites are required. For projections, see "projection support." This allows for pure python installation with supplemental support if desired.
+Python map overlay software to read CNO and CNOB files. This provides a light-weight interface to add overlays to `matplotlib` plots. For longitude/latitude plots, no additional prerequisites are required. For data with projected coordinates, see "projection support." This allows for pure python installation with supplemental support if desired.
 
-# status
+status
+------
 
 [![Build Status](https://travis-ci.org/barronh/pycno.svg?branch=main)](https://travis-ci.org/barronh/pycno)
 
 Early development. Useful light weight mapping library. Interface may change.
 
-# install 
+install
+-------
 
 * Latest release: `pip install pycno`
 * Lastest development: `pip install https://github.com/barronh/pycno/archive/main.zip`
 
 
-# example usage
+example usage
+-------------
 
 By default, this adds coasts and countries to the current axes. If the current axes has no other data on it, provide the xlim/ylim keywords to define the extents.
 
@@ -30,12 +34,14 @@ plt.savefig('coasts_countries.png')
 
 Use the cnopath keyword to specify another overlay. If you specify a downloadable cnopath you don't have, it will automatically be downloaded. For a list of downloadable cnob, see pycno.downloadable. Currently, this includes the [Panoply Overlay cnobs](https://www.giss.nasa.gov/tools/panoply/overlays/). For example, `cno.draw('MWDB_Coasts_NA_1.cnob')` will download a high-resolution version of North American coasts, continents, and states.
 
-# projection support
+projection support
+------------------
 
-`pycno.cno` supports the pyproj projections. If you provide proj, then overlays will be converted to the projection space and xlim/ylim will need to be provided in projection space. This should work for most projections, but has only been tested with  Lambert Conformal Conic and Polar Stereographic. If you test it with another projection, please post a comment under issues and let us know.
+`pycno.cno` supports the pyproj projections. If you provide the `proj` keyword, then overlays coordinates will be converted to the projection space before being plotted. In this case, the xlim/ylim keyworkds will need to be provided in projection space. This should work for most projections, but has only been tested with  Lambert Conformal Conic and Polar Stereographic. If you test it with another projection, please post a comment under issues and let us know.
 
 
-## lambert conic conformal
+lambert conic conformal
+-----------------------
 
 Example uses LCC domain used by EPA and called 12US2
 
@@ -59,7 +65,8 @@ cno.draw()
 plt.savefig('coasts_countries_lcc.png')
 ```
 
-## polar stereographic
+polar stereographic
+-------------------
 
 Example uses Polar Stereographic domain used by EPA and called 108NHEMI2
 

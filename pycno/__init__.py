@@ -1,4 +1,134 @@
-__all__ = ['cno', 'downloadable', 'version']
+__all__ = ['cno', 'downloadable', '__version__']
+__doc__ = """Light-weight map-overlay drawing software
+
+pycno
+=====
+
+Python map overlay software to read CNO and CNOB files. This provides a
+light-weight interface to add overlays to `matplotlib` plots. For
+longitude/latitude plots, no additional prerequisites are required. For data
+with projected coordinates, see "projection support." This allows for pure
+python installation with supplemental support if desired.
+
+status
+------
+
+[Build status](https://travis-ci.org/barronh/pycno)
+![Build badge](https://travis-ci.org/barronh/pycno.svg?branch=main)
+
+Early development. Useful light weight mapping library. Expect enhancements.
+
+install
+-------
+
+* Latest release: `pip install pycno`
+* Lastest dev: `pip install https://github.com/barronh/pycno/archive/main.zip`
+
+
+example usage
+-------------
+
+By default, this adds coasts and countries to the current axes. If the current
+axes has no other data on it, provide the xlim/ylim keywords to define the
+extents.
+
+```
+import pycno
+import matplotlib.pyplot as plt
+
+
+cno = pycno.cno(xlim=(-180, 180), ylim=(-90, 90))
+cno.draw()
+plt.savefig('coasts_countries.png')
+```
+
+Use the cnopath keyword to specify another overlay. If you specify a
+downloadable cnopath you don't have, it will automatically be downloaded. For a
+list of downloadable cnob, see pycno.downloadable. Currently, this includes the
+[Panoply Overlay cnobs](https://www.giss.nasa.gov/tools/panoply/overlays/). For
+example, `cno.draw('MWDB_Coasts_NA_1.cnob')` will download a high-resolution
+version of North American coasts, continents, and states.
+
+
+projection support
+------------------
+
+`pycno.cno` supports the pyproj projections. If you provide the `proj` keyword,
+then overlays coordinates will be converted to the projection space before
+being plotted. In this case, the xlim/ylim keyworkds will need to be provided
+in projection space. This should work for most projections, but has only been
+tested with  Lambert Conformal Conic and Polar Stereographic. If you test it
+with another projection, please post a comment under issues and let us know.
+
+
+lambert conic conformal
+-----------------------
+
+Example uses LCC domain used by EPA and called 12US2
+
+```
+import pycno
+import pyproj
+import matplotlib.pyplot as plt
+
+
+proj = pyproj.Proj(
+  (
+    '+proj=lcc +lat_0=40 +lon_0=-97 +lat_1=33 +lat_2=45 ' +
+    '+x_0=2412000 +y_0=1620000 +R=6370000 +to_meter=12000 ' +
+    '+no_defs'
+  ),
+  preserve_units=True
+)
+plt.axis('image')
+cno = pycno.cno(proj=proj, xlim=(0, 396), ylim=(0, 246))
+cno.draw()
+plt.savefig('coasts_countries_lcc.png')
+```
+
+
+polar stereographic
+-------------------
+
+Example uses Polar Stereographic domain used by EPA and called 108NHEMI2
+
+
+```
+import pycno
+import pyproj
+import matplotlib.pyplot as plt
+
+
+proj = pyproj.Proj(
+  (
+    '+proj=stere +lat_0=90 +lat_ts=45 +lon_0=-98 ' +
+    '+x_0=10098000 +y_0=10098000 +R=6370000 +to_meter=108000 ' +
+    '+no_defs'
+  ),
+  preserve_units=True
+)
+plt.axis('image')
+cno = pycno.cno(proj=proj, xlim=(0, 187), ylim=(0, 187))
+cno.draw()
+plt.savefig('coasts_countries_ps.png')
+```
+
+
+structure
+=========
+
+pycno
+|-- __version__
+|-- cno
+|-- downloadable
+`-- tests
+
+* `cno` is the primary class
+* `__version__` tells which MAJOR.MINOR.FIX revision you are using
+* `downloadable` dictionary of downloadable CNOB. Currently includes all
+  [Panoply Overlays](https://www.giss.nasa.gov/tools/panoply/overlays/)
+* `tests` built-in test cases.
+"""
 
 import os
 from pathlib import Path
@@ -6,7 +136,7 @@ import warnings
 import numpy as np
 
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 _panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
 _panoplycnobs = [
@@ -47,9 +177,13 @@ class cno:
             or any function that accepts lon, lat and returns x, y in axes
             data coordinates
         xlim : tuple
-            length 2 tuple where values must be accepted by set_xlim
+            length 2 tuple where values must be accepted by set_xlim. If None,
+            all data is plotted. Otherwise, overlay lines are only plotted
+            within the xlim.
         ylim : tuple
-            length 2 tuple where values must be accepted by set_ylim
+            length 2 tuple where values must be accepted by set_ylim. If None,
+            all data is plotted. Otherwise, overlay lines are only plotted
+            within the ylim.
         clipax : bool
             If True, use ax.set_xlim and ax.set_ylim with xlim and ylim
             parameters
@@ -59,8 +193,8 @@ class cno:
             If neither path exists, defaults to .
         line_kwds : keywords
             passed to drawing of lines. linewidth defaults to 0.5, and
-            linecolor defaults to black. All other properties defautl to
-            rcParams
+            linecolor defaults to black. All other properties default to
+            standard matplotlib.pypplot.rcParams
         """
         if isinstance(proj, str):
             import pyproj
