@@ -73,3 +73,29 @@ def test_cno_projps():
     ax = plt.gca()
     nc = len(ax.collections)
     assert(nc == 1)
+
+def test_cno_cnofile():
+    plt.close()
+    ax = plt.gca()
+    ol = cno(xlim=(-180, 180), ylim=(-90, 90))
+    l = ol.draw('test.cno', ax=ax)
+    p1, p2 = l.get_paths()
+    xy1 = p1.vertices
+    xy2 = p2.vertices
+    assert((xy1[:, 0] == np.array([-4.0, -4., 4., 4., -4.])).all())
+    assert((xy1[:, 1] == np.array([4.0, -4., -4., 4., 4.])).all())
+    assert((xy2[:, 0] == np.array([-8.0, -8., 8., 8., -8.])).all())
+    assert((xy2[:, 1] == np.array([8.0, -8., -8., 8., 8.])).all())
+
+def test_cnob_cnofile():
+    plt.close()
+    ax = plt.gca()
+    ol = cno(xlim=(-180, 180), ylim=(-90, 90))
+    l = ol.draw('test.cnob', ax=ax)
+    p1, p2 = l.get_paths()
+    xy1 = p1.vertices
+    xy2 = p2.vertices
+    assert((xy1[:, 0] == np.array([-4.0, -4., 4., 4., -4.])).all())
+    assert((xy1[:, 1] == np.array([4.0, -4., -4., 4., 4.])).all())
+    assert((xy2[:, 0] == np.array([-8.0, -8., 8., 8., -8.])).all())
+    assert((xy2[:, 1] == np.array([8.0, -8., -8., 8., 8.])).all())
