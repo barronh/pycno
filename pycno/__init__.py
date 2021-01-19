@@ -1,4 +1,4 @@
-__all__ = ['cno', 'downloadable', '__version__']
+__all__ = ['cno', 'downloadable', 'show_version', '__version__']
 __doc__ = """Light-weight map-overlay drawing software
 
 pycno
@@ -136,7 +136,7 @@ import warnings
 import numpy as np
 
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 _panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
 _panoplycnobs = [
@@ -162,6 +162,30 @@ _panoplycnobs = [
 
 downloadable = {k: _panoplyurl + k for k in _panoplycnobs}
 
+def show_version():
+    print(f'pycno: {__version__}')
+    print('data store:', _getdata())
+    try:
+        import pyproj
+        pyproj.show_versions()
+    except Exception as e:
+        print('Unable to print pyproj version', e)
+
+
+def _getdata(data=None):
+    if data is None:
+        data = os.environ.get('PYCNO_DATA', None)
+
+    if data is None:
+        data = Path.home() / '.pycno'
+
+    if not os.path.exists(data):
+        warnings.warn('Path does not exist: ' + str(data) + '; default .')
+        warnings.filterwarnings(
+            "ignore", category=UserWarning, module=__name__, lineno=47
+        )
+        data = '.'
+    return data
 
 class cno:
     def __init__(
@@ -208,19 +232,7 @@ class cno:
         self._linedefaults = line_kwds.copy()
         self._linedefaults.setdefault('color', 'k')
         self._linedefaults.setdefault('linewidth', 0.5)
-        if data is None:
-            data = os.environ.get('PYCNO_DATA', None)
-
-        if data is None:
-            data = Path.home() / '.pycno'
-
-        if not os.path.exists(data):
-            warnings.warn('Path does not exist: ' + str(data) + '; default .')
-            warnings.filterwarnings(
-                "ignore", category=UserWarning, module=__name__, lineno=47
-            )
-            data = '.'
-
+        data = _getdata(data)
         self._data = Path(data)
 
     @property
