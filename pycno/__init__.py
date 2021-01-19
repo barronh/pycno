@@ -162,6 +162,7 @@ _panoplycnobs = [
 
 downloadable = {k: _panoplyurl + k for k in _panoplycnobs}
 
+
 def show_version():
     print(f'pycno: {__version__}')
     print('data store:', _getdata())
@@ -186,6 +187,7 @@ def _getdata(data=None):
         )
         data = '.'
     return data
+
 
 class cno:
     def __init__(
