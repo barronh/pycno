@@ -6,7 +6,7 @@ Python map overlay software to read CNO and CNOB files. This provides a light-we
 status
 ------
 
-[![Build Status](https://travis-ci.org/barronh/pycno.svg?branch=main)](https://travis-ci.org/barronh/pycno)
+[![Build Status](https://app.travis-ci.com/barronh/pycno.svg?branch=main)](https://app.travis-ci.com/github/barronh/pycno)
 
 Early development. Useful light weight mapping library. Interface may change.
 
