@@ -126,7 +126,7 @@ pycno
 `-- tests
 
 * `cno` is the primary class
-* `__version__` tells which MAJOR.MINOR.FIX revision you are using
+* `__version__` tells which MAJOR.MINOR.MICRO revision you are using
 * `downloadable` dictionary of downloadable CNOB. Currently includes all
   [Panoply Overlays](https://www.giss.nasa.gov/tools/panoply/overlays/)
 * `util` has some utilities for making cno and cnob files
@@ -139,7 +139,7 @@ import warnings
 import numpy as np
 from . import util
 
-__version__ = "0.1.3"
+__version__ = "0.2.0"
 
 _panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
 _panoplycnobs = [

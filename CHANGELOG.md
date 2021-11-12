@@ -1,3 +1,15 @@
+0.2
+===
+
+0.2.0
+-----
+
+* Added shapefile conversion utilities.
+* Added tox for client-side continuous integration.
+* Improved some documentation.
+* Impoved flake8 warning and error compliance.
+* The next update will move pycno to version 1.0.0.
+
 0.1
 ===
 
