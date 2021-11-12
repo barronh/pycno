@@ -42,12 +42,12 @@ def test_cno_xylimkw():
 def test_cno_projlcc():
     import pyproj
     proj = pyproj.Proj(
-      (
-        '+proj=lcc +lat_0=40 +lon_0=-97 +lat_1=33 +lat_2=45 ' +
-        '+x_0=2412000 +y_0=1620000 +R=6370000 +to_meter=12000 ' +
-        '+no_defs'
-      ),
-      preserve_units=True
+        (
+            '+proj=lcc +lat_0=40 +lon_0=-97 +lat_1=33 +lat_2=45 ' +
+            '+x_0=2412000 +y_0=1620000 +R=6370000 +to_meter=12000 ' +
+            '+no_defs'
+        ),
+        preserve_units=True
     )
     plt.close()
     ol = cno(proj=proj, xlim=(0, 396), ylim=(0, 246), data='.')
@@ -60,12 +60,12 @@ def test_cno_projlcc():
 def test_cno_projps():
     import pyproj
     proj = pyproj.Proj(
-      (
-        '+proj=stere +lat_0=90 +lat_ts=45 +lon_0=-98 ' +
-        '+x_0=10098000 +y_0=10098000 +R=6370000 +to_meter=108000 ' +
-        '+no_defs'
-      ),
-      preserve_units=True
+        (
+            '+proj=stere +lat_0=90 +lat_ts=45 +lon_0=-98 ' +
+            '+x_0=10098000 +y_0=10098000 +R=6370000 +to_meter=108000 ' +
+            '+no_defs'
+        ),
+        preserve_units=True
     )
     plt.close()
     ol = cno(proj=proj, xlim=(0, 187), ylim=(0, 187), data='.')

@@ -1,4 +1,4 @@
-__all__ = ['cno', 'downloadable', 'show_version', '__version__']
+__all__ = ['cno', 'downloadable', 'util', 'show_version', '__version__']
 __doc__ = """Light-weight map-overlay drawing software
 
 pycno
@@ -121,12 +121,15 @@ pycno
 |-- __version__
 |-- cno
 |-- downloadable
+|-- util
+|   `-- shp2cno
 `-- tests
 
 * `cno` is the primary class
 * `__version__` tells which MAJOR.MINOR.FIX revision you are using
 * `downloadable` dictionary of downloadable CNOB. Currently includes all
   [Panoply Overlays](https://www.giss.nasa.gov/tools/panoply/overlays/)
+* `util` has some utilities for making cno and cnob files
 * `tests` built-in test cases.
 """
 
@@ -134,7 +137,7 @@ import os
 from pathlib import Path
 import warnings
 import numpy as np
-
+from . import util
 
 __version__ = "0.1.3"
 
@@ -316,7 +319,7 @@ class cno:
         #     lines.append(l)
         segs = [np.ma.array(lonlat).T for lonlat in features]
         lines = LineCollection(
-          segs, **line_kwds
+            segs, **line_kwds
         )
         ax.add_collection(lines)
         if self._clipax:
@@ -348,26 +351,40 @@ class cno:
         return features
 
     def _parsecno(self, cnopath):
-        # The definition of these file format is understood by reading the
-        # files, so it is an operational definition.
-        #
-        # A CNO is a text file, where the data is stored as common deliminted
-        # longitude,latitude pairs on each line. Polygons are separated by
-        # lines with a single 9999 betweenA
-        # e.g., the lines below could be a stand-alone cno file.
-        #
-        # -15.80,28.00
-        # -15.67,27.75
-        # -15.33,27.83
-        # -15.37,28.08
-        # -15.67,28.17
-        # -15.80,28.00
-        # 9999
-        # -14.25,28.08
-        # -13.83,28.25
-        # -13.83,28.83
-        # -14.25,28.33
-        # -14.25,28.08
+        """
+        Arguments
+        ---------
+        cnopath : str
+            path to a CNO binary file
+
+        Returns
+        -------
+        xys : list
+            list of tuples where the first element is x and the second is y
+
+        Notes
+        -----
+        The definition of these file format is understood by reading the
+        files, so it is an operational definition.
+
+        A CNO is a text file, where the data is stored as common deliminted
+        longitude,latitude pairs on each line. Polygons are separated by
+        lines with a single 9999 between.
+        e.g., the lines below could be a stand-alone cno file.
+
+        -15.80,28.00
+        -15.67,27.75
+        -15.33,27.83
+        -15.37,28.08
+        -15.67,28.17
+        -15.80,28.00
+        9999
+        -14.25,28.08
+        -13.83,28.25
+        -13.83,28.83
+        -14.25,28.33
+        -14.25,28.08
+        """
         import re
         import io
         import numpy as np
@@ -389,15 +406,28 @@ class cno:
         return features
 
     def _parsecnob(self, cnopath):
-        # The definition of these file format is understood by reading the
-        # files, so it is an operational definition.
-        #
-        # A CNOB is a binary file starts with a text header with 8 characters
-        # GISSCNOB followed by a block of binary data. The binary data is
-        # stored as big-endian integers where the value has been multiplied by
-        # 1000 with longitude followed by latitude. For CNOB, each polygon is
-        # bounded by 999999 (start and end).
-        #
+        """
+        Arguments
+        ---------
+        cnopath : str
+            path to a CNO binary file
+
+        Returns
+        -------
+        xys : list
+            list of tuples where the first element is x and the second is y
+
+        Notes
+        -----
+        The definition of these file format is understood by reading the
+        files, so it is an operational definition.
+
+        A CNOB is a binary file starts with a text header with 8 characters
+        GISSCNOB followed by a block of binary data. The binary data is
+        stored as big-endian integers where the value has been multiplied by
+        1000 with longitude followed by latitude. For CNOB, each polygon is
+        bounded by 999999 (start and end).
+        """
 
         f = open(cnopath, 'rb')
         buff = np.frombuffer(f.read(), '>i')
