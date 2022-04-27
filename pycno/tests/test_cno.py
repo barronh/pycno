@@ -144,8 +144,9 @@ def test_cno_cnobfile_proj():
     assert(np.allclose(xy1, refxy1))
     assert(np.allclose(xy2, refxy2))
 
+
 def test_cno_wrappers():
-   ol = cno()
-   ol.drawcoastlines()
-   ol.drawcountries()
-   ol.drawstates()
+    ol = cno()
+    ol.drawcoastlines()
+    ol.drawcountries()
+    ol.drawstates()
