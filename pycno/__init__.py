@@ -139,7 +139,7 @@ import warnings
 import numpy as np
 from . import util
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 _panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
 _panoplycnobs = [
@@ -326,6 +326,27 @@ class cno:
             ax.set_xlim(*self._xlim)
             ax.set_ylim(*self._ylim)
         return lines
+
+    def drawcoastlines(self, ax=None, resnum=3, **line_kwds):
+        """
+        Call draw with 'MWDB_Coasts_{resnum}.cnob'
+        """
+        cnopath = f'MWDB_Coasts_{resnum}.cnob'
+        return self.draw(cnopath=cnopath, ax=ax, **line_kwds)
+
+    def drawcountries(self, ax=None, resnum=3, **line_kwds):
+        """
+        Call draw with 'MWDB_Coasts_Countries_{resnum}.cnob'
+        """
+        cnopath = f'MWDB_Coasts_Countries_{resnum}.cnob'
+        return self.draw(cnopath=cnopath, ax=ax, **line_kwds)
+
+    def drawstates(self, ax=None, resnum=3, **line_kwds):
+        """
+        Call draw with 'MWDB_Coasts_NA_{resnum}.cnob'
+        """
+        cnopath = f'MWDB_Coasts_NA_{resnum}.cnob'
+        return self.draw(cnopath=cnopath, ax=ax, **line_kwds)
 
     def _parseoverlay(self, cnopath):
         """
