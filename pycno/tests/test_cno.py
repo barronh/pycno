@@ -12,7 +12,7 @@ def test_cno_default():
     ol.draw()
     ax = plt.gca()
     nc = len(ax.collections)
-    assert(nc == 1)
+    assert (nc == 1)
 
 
 def test_cno_axkw():
@@ -20,7 +20,7 @@ def test_cno_axkw():
     ol = cno(data='.')
     fig, axx = plt.subplots(1, 3)
     ol.draw(ax=axx[1])
-    assert(np.allclose(
+    assert (np.allclose(
         [0, 1, 0],
         [len(ax.collections) for ax in axx]
     ))
@@ -33,10 +33,10 @@ def test_cno_xylimkw():
     ax = plt.gca()
     xlim = ax.get_xlim()
     ylim = ax.get_ylim()
-    assert(xlim[0] == -180)
-    assert(xlim[1] == 180)
-    assert(ylim[0] == -90)
-    assert(ylim[1] == 90)
+    assert (xlim[0] == -180)
+    assert (xlim[1] == 180)
+    assert (ylim[0] == -90)
+    assert (ylim[1] == 90)
 
 
 def test_cno_projlcc():
@@ -54,7 +54,7 @@ def test_cno_projlcc():
     ol.draw()
     ax = plt.gca()
     nc = len(ax.collections)
-    assert(nc == 1)
+    assert (nc == 1)
 
 
 def test_cno_projps():
@@ -72,7 +72,7 @@ def test_cno_projps():
     ol.draw()
     ax = plt.gca()
     nc = len(ax.collections)
-    assert(nc == 1)
+    assert (nc == 1)
 
 
 def test_cno_cnofile():
@@ -83,10 +83,10 @@ def test_cno_cnofile():
     p1, p2 = linecol.get_paths()
     xy1 = p1.vertices
     xy2 = p2.vertices
-    assert((xy1[:, 0] == np.array([-4.0, -4., 4., 4., -4.])).all())
-    assert((xy1[:, 1] == np.array([4.0, -4., -4., 4., 4.])).all())
-    assert((xy2[:, 0] == np.array([-8.0, -8., 8., 8., -8.])).all())
-    assert((xy2[:, 1] == np.array([8.0, -8., -8., 8., 8.])).all())
+    assert ((xy1[:, 0] == np.array([-4.0, -4., 4., 4., -4.])).all())
+    assert ((xy1[:, 1] == np.array([4.0, -4., -4., 4., 4.])).all())
+    assert ((xy2[:, 0] == np.array([-8.0, -8., 8., 8., -8.])).all())
+    assert ((xy2[:, 1] == np.array([8.0, -8., -8., 8., 8.])).all())
 
 
 def test_cno_cnobfile():
@@ -105,8 +105,8 @@ def test_cno_cnobfile():
         [-8.0, -8., 8., 8., -8.],
         [8.0, -8., -8., 8., 8.]
     ]).T
-    assert(np.allclose(xy1, refxy1))
-    assert(np.allclose(xy2, refxy2))
+    assert (np.allclose(xy1, refxy1))
+    assert (np.allclose(xy2, refxy2))
 
 
 def test_cno_cnobfile_proj():
@@ -141,8 +141,8 @@ def test_cno_cnobfile_proj():
         [8.8377412, 9.19138176],
         [-8.8377412, 9.19138176]
     ])
-    assert(np.allclose(xy1, refxy1))
-    assert(np.allclose(xy2, refxy2))
+    assert (np.allclose(xy1, refxy1))
+    assert (np.allclose(xy2, refxy2))
 
 
 def test_cno_wrappers():
