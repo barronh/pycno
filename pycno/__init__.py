@@ -139,7 +139,7 @@ import warnings
 import numpy as np
 from . import util
 
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 
 _panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
 _panoplycnobs = [
@@ -292,14 +292,18 @@ class cno:
             working directory (`.`), the `data` path or `${HOME}/.pycno`.
             For a list of downloadable cnob, look at `pycno.downloadable`
         ax : matplotlib.axes.Axes
-            Optional, specify axes for overlay.
+            Optional, specify axes for overlay. If ax is a single Axes, then
+            lines will be added to it. If ax is omitted, ax = plt.gca(). If
+            ax is iterable, then a set of lines will be added to each axes.
         line_kwds : mappable
             keywords for drawing lines.
 
         Returns
         -------
-        lines : list
-            lines that were added to ax or plt.gca().
+        lines : LineCollection or list
+            line collection(s) that were added to ax or plt.gca(). When ax is a
+            single axes or None, a LineCollection is returned. If ax was an
+            iterable, then a list of line collections (1 per ax) is returned
         """
         from matplotlib.collections import LineCollection
         line_kwds = line_kwds.copy()
@@ -318,14 +322,20 @@ class cno:
         #     l, = ax.plot(flon, flat, **line_kwds)
         #     lines.append(l)
         segs = [np.ma.array(lonlat).T for lonlat in features]
-        lines = LineCollection(
-            segs, **line_kwds
-        )
-        ax.add_collection(lines)
-        if self._clipax:
-            ax.set_xlim(*self._xlim)
-            ax.set_ylim(*self._ylim)
-        return lines
+        axx = np.asarray(ax)
+        lcs = []
+        for ax in axx.ravel():
+            lines = LineCollection(segs, **line_kwds)
+            ax.add_collection(lines)
+            if self._clipax:
+                ax.set_xlim(*self._xlim)
+                ax.set_ylim(*self._ylim)
+            lcs.append(lines)
+
+        if len(lcs) == 1:
+            return lines
+        else:
+            return lcs
 
     def drawcoastlines(self, ax=None, resnum=3, **line_kwds):
         """

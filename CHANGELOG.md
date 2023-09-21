@@ -1,5 +1,17 @@
+0.3
+===
+
+0.3.0
+-----
+* Added support for all draw commands for multiple axes
+
 0.2
 ===
+
+0.2.1
+-----
+* Added testing utilities like tox and flake.
+* Added convenience functions: drawcoastlines, drawcountries, drawstates
 
 0.2.0
 -----

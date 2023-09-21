@@ -15,6 +15,15 @@ def test_cno_default():
     assert (nc == 1)
 
 
+def test_cno_multiax():
+    fig, axx = plt.subplots(2, 2, figsize=(12, 4), dpi=72)
+    ol = cno()
+    ol.draw(ax=axx)
+    for ax in axx.ravel():
+        nc = len(ax.collections)
+        assert (nc == 1)
+
+
 def test_cno_axkw():
     plt.close()
     ol = cno(data='.')
