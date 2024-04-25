@@ -139,7 +139,7 @@ import warnings
 import numpy as np
 from . import util
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 _panoplyurl = 'https://www.giss.nasa.gov/tools/panoply/overlays/'
 _panoplycnobs = [

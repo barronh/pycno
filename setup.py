@@ -1,12 +1,20 @@
 import setuptools
+import os
+
+cachedir = os.path.expanduser('~/.pycno')
+try:
+    os.makedirs(cachedir, exist_ok=True)
+except Exception:
+    # could not install user cache
+    pass
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 with open("pycno/__init__.py", "r") as fh:
-    for l in fh:
-        if l.startswith('__version__'):
-            exec(l)
+    for _l in fh:
+        if _l.startswith('__version__'):
+            exec(_l)
             break
     else:
         __version__ = 'x.y.z'
